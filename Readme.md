@@ -49,7 +49,7 @@ This policy allows the device to connect and send data.
 The next step was to create a role for the “Just in time provisioning” template. 
 It allowed to assign a policy to a certificate and register devices.
 * JITP Role:
-    * ![JITP role](aws/screenshots/jitp_role_aws)
+    * ![JITP role](aws/screenshots/jitp_role_aws.jpg)
 
 
 The last step was to configure the “Just in time provisioning” template. 
