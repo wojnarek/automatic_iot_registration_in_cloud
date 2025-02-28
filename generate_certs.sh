@@ -58,6 +58,6 @@ echo " - Root key CA: $ROOT_CA_KEY"
 echo " - Device cert: $DEVICE_PEM"
 echo " - Device key: $DEVICE_KEY"
 echo
-echo "Device cert with CN=$CN, valid for: $VALID_DAYS dni."
+echo "Device cert with CN=$CN, valid for: $VALID_DAYS days."
 echo "==========================================="
 
