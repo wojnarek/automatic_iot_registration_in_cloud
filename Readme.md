@@ -38,18 +38,18 @@ For AWS, the AWS IoT Core service requires configuration.
 
 The first step was to upload the previously generated Root CA to AWS IoT Core.
 * Register Root CA:
-    * ![Upload rootca](aws\screenshots\register_ca_aws.jpg)
+    * ![Upload rootca](aws/screenshots/register_ca_aws.jpg)
 
 
 Then a policy had to be created for the device, which was assigned to the certificate with which the device was presented. 
 This policy allows the device to connect and send data.
 * Device policy:
-    * ![Upload rootca](aws\screenshots\device_policy_aws.jpg)
+    * ![Upload rootca](aws/screenshots/device_policy_aws.jpg)
 
 The next step was to create a role for the “Just in time provisioning” template. 
 It allowed to assign a policy to a certificate and register devices.
 * JITP Role:
-    * ![JITP role](aws\screenshots\jitp_role_aws)
+    * ![JITP role](aws/screenshots/jitp_role_aws)
 
 
 The last step was to configure the “Just in time provisioning” template. 
