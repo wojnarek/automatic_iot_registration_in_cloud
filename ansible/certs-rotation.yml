@@ -1,0 +1,70 @@
+- name: Checked for certs expiration and replacment
+  hosts: iot
+  become: true
+  tasks:
+    - name: Check if certs expires in 7 days
+      ansible.builtin.shell: "openssl x509 -enddate -noout -in /home/iotuser/certs/device_certificate.pem.crt | cut -d= -f2"
+      register: cert_expiry
+      changed_when: false
+      ignore_errors: true
+      become: true
+      become_user: iotuser
+
+    - name: Display cert exprie date
+      debug:
+        msg: "Cert expires: {{ cert_expiry.stdout | default('Brak daty') }}"
+
+    - name: Convert date to timestamp
+      ansible.builtin.set_fact:
+        cert_expiry_timestamp: "{{ (cert_expiry.stdout | regex_replace(' GMT$', '') | to_datetime('%b %d %H:%M:%S %Y')).timestamp() }}"
+      when: cert_expiry.stdout is defined and cert_expiry.stdout | trim | length > 0
+
+    - name: Get current date
+      ansible.builtin.set_fact:
+        current_timestamp: "{{ ansible_date_time.epoch | int }}"
+
+    - name: Check if cert needs replacment
+      ansible.builtin.set_fact:
+        cert_needs_update: "{{ (cert_expiry_timestamp | int) - (current_timestamp | int) < 604800 }}"  # 7 dni (604800 sekund)
+      when: cert_expiry_timestamp is defined
+
+    - name: Old cert backup if neccessary
+      ansible.builtin.copy:
+        src: "/home/iotuser/certs/device_certificate.pem.crt"
+        dest: "/home/iotuser/certs/device_certificate.pem.crt.{{ ansible_date_time.date }}"
+        remote_src: true
+      when: cert_needs_update
+      ignore_errors: true
+
+    - name: Old key backup if neccessary
+      ansible.builtin.copy:
+        src: "/home/iotuser/certs/device_private_key.pem.key"
+        dest: "/home/iotuser/certs/device_private_key.pem.key.{{ ansible_date_time.date }}"
+        remote_src: true
+      when: cert_needs_update
+      ignore_errors: true
+
+    - name: Copy new cert
+      ansible.builtin.copy:
+        src: "./certs/device_certificate.pem.crt"  
+        dest: "/home/iotuser/certs/device_certificate.pem.crt"
+        mode: '0644'
+        owner: iotuser
+        group: iotuser
+      when: cert_needs_update
+
+    - name: Copy new key
+      ansible.builtin.copy:
+        src: "./certs/device_private.pem.key" 
+        dest: "/home/iotuser/certs/device_private.pem.key"
+        mode: '0600'
+        owner: iotuser
+        group: iotuser
+      when: cert_needs_update
+
+    - name: Service restart
+      ansible.builtin.systemd:
+        name: iot_app
+        state: restarted
+      when: cert_needs_update
+      become: true

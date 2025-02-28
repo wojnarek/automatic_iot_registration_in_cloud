@@ -1,0 +1,116 @@
+---
+# tasks file for roles/iot
+- name: Create iot user
+  ansible.builtin.user:
+    name: iotuser
+    home: /home/iotuser
+    shell: /bin/bash
+    state: present
+
+- name: Add user to gpio groups
+  ansible.builtin.user:
+    name: iotuser
+    groups: gpio,dialout
+    append: true
+
+- name: Check if python already exist
+  ansible.builtin.shell: "which python3"
+  register: python_installed
+  changed_when: false
+  ignore_errors: true
+
+- name: Install python
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+    state: present
+    update_cache: true
+  when: python_installed.rc != 0
+
+- name: Create directories for files
+  ansible.builtin.file:
+    path: "/home/iotuser/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - iot_files
+    - certs
+
+- name: Create venv (if not exists)
+  ansible.builtin.command:
+    cmd: python3 -m venv /home/iotuser/iot_files/iotvenv
+    creates: /home/iotuser/iot_files/iotvenv/bin/activate
+  become: true
+
+- name: Copy python files
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+    owner: iotuser
+    group: iotuser
+  with_items:
+    - { src: "./code/app.py", dest: "/home/iotuser/iot_files"}
+    - { src: "./code/get_sensor_data.py", dest: "/home/iotuser/iot_files"}
+    - { src: "./code/requirements.txt", dest: "/home/iotuser/iot_files"}
+    - { src: "./code/.env", dest: "/home/iotuser/iot_files"}
+
+- name: Copy certs
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0600'
+    owner: iotuser
+    group: iotuser
+  with_items:
+    - { src: "./certs/AmazonCA1.pem", dest: "/home/iotuser/certs"}
+    - { src: "./certs/device_certificate.pem.crt", dest: "/home/iotuser/certs"}
+    - { src: "./certs/device_private.pem.key", dest: "/home/iotuser/certs"}
+
+- name: Change venv owner
+  ansible.builtin.file:
+    path: /home/iotuser/iot_files/iotvenv
+    state: directory
+    owner: pi
+    group: pi
+    recurse: true
+
+- name: Packets install
+  ansible.builtin.pip:
+    name: [wheel, sysv-ipc, rpi_ws281x, rpi.gpio]
+    virtualenv: /home/iotuser/iot_files/iotvenv
+    extra_args: "--no-cache-dir"
+  become: true
+  become_user: pi
+
+- name: Install requierments
+  ansible.builtin.pip:
+    requirements: /home/iotuser/iot_files/requirements.txt
+    virtualenv: /home/iotuser/iot_files/iotvenv
+    extra_args: "--no-cache-dir"
+  become: true
+  become_user: pi
+
+- name: Change venv owner
+  ansible.builtin.file:
+    path: /home/iotuser/iot_files/iotvenv
+    state: directory
+    owner: iotuser
+    group: iotuser
+    recurse: true
+
+- name: Create systemd
+  ansible.builtin.template:
+    src: app_service.j2
+    dest: /etc/systemd/system/iot_app.service
+    mode: '0644'
+  become: true
+
+- name: Start iot_app service
+  ansible.builtin.systemd:
+    name: iot_app
+    enabled: true
+    state: started
+  become: true

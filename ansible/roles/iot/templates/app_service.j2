@@ -1,0 +1,13 @@
+[Unit]
+Description=IoT Application
+After=network.target
+
+[Service]
+ExecStart=/home/iotuser/iot_files/iotvenv/bin/python /home/iotuser/iot_files/app.py
+WorkingDirectory=/home/iotuser/iot_files
+Restart=always
+User=iotuser
+Group=iotuser
+
+[Install]
+WantedBy=multi-user.target

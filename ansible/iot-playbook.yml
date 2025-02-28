@@ -1,0 +1,5 @@
+- name: IoT deploy
+  hosts: iot
+  become: true
+  roles:
+    - iot
