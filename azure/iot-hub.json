@@ -1,0 +1,88 @@
+ "properties": {
+        "locations": [
+            {
+                "location": "East US",
+                "role": "primary"
+            },
+            {
+                "location": "West US",
+                "role": "secondary"
+            }
+        ],
+        "state": "Active",
+        "provisioningState": "Succeeded",
+        "ipFilterRules": [],
+        "hostName": "[YOUR HOSTNAME]",
+        "eventHubEndpoints": {
+            "events": {
+                "retentionTimeInDays": 1,
+                "partitionCount": 2,
+                "partitionIds": [
+                    "0",
+                    "1"
+                ],
+                "path": "",
+                "endpoint": ""
+            }
+        },
+        "routing": {
+            "endpoints": {
+                "serviceBusQueues": [],
+                "serviceBusTopics": [],
+                "eventHubs": [],
+                "storageContainers": []
+            },
+            "routes": [],
+            "fallbackRoute": {
+                "name": "$fallback",
+                "source": "DeviceMessages",
+                "condition": "true",
+                "endpointNames": [
+                    "events"
+                ],
+                "isEnabled": true
+            }
+        },
+        "storageEndpoints": {
+            "$default": {
+                "sasTtlAsIso8601": "PT1H",
+                "connectionString": "",
+                "containerName": ""
+            }
+        },
+        "messagingEndpoints": {
+            "fileNotifications": {
+                "lockDurationAsIso8601": "PT1M",
+                "ttlAsIso8601": "PT1H",
+                "maxDeliveryCount": 10
+            }
+        },
+        "enableFileUploadNotifications": false,
+        "cloudToDevice": {
+            "maxDeliveryCount": 10,
+            "defaultTtlAsIso8601": "PT1H",
+            "feedback": {
+                "lockDurationAsIso8601": "PT1M",
+                "ttlAsIso8601": "PT1H",
+                "maxDeliveryCount": 10
+            }
+        },
+        "features": "RootCertificateV2",
+        "minTlsVersion": "1.2",
+        "disableLocalAuth": false,
+        "allowedFqdnList": [],
+        "enableDataResidency": false
+    },
+    "sku": {
+        "name": "F1",
+        "tier": "Free",
+        "capacity": 1
+    },
+    "identity": {
+        "type": "None"
+    },
+    "systemData": {
+        "createdAt": "2024-12-19T18:49:44.4266667Z"
+    },
+    "apiVersion": "2021-07-02-preview"
+}

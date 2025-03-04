@@ -1,0 +1,29 @@
+"properties": {
+        "state": "Active",
+        "provisioningState": "Succeeded",
+        "iotHubs": [
+            {
+                "name": "[YOUR IOT HUB NAME]",
+                "connectionString": "[YOUR CONNECTION STRING]",
+                "location": "eastus",
+                "authenticationType": "KeyBased"
+            }
+        ],
+        "allocationPolicy": "Hashed",
+        "serviceOperationsHostName": "[YOUR NAME].azure-devices-provisioning.net]",
+        "deviceProvisioningHostName": "global.azure-devices-provisioning.net",
+        "idScope": "0ne00E47F4F",
+        "enableDataResidency": false
+    },
+    "resourcegroup": "",
+    "type": "Microsoft.Devices/provisioningServices",
+    "id": "",
+    "subscriptionid": "",
+    "tags": {},
+    "sku": {
+        "name": "S1",
+        "tier": "Standard",
+        "capacity": 1
+    },
+    "apiVersion": "2021-10-15"
+}
