@@ -9,6 +9,7 @@ In the project the Raspberry Pi 3A+ with rpios and the DHT11 sensor were used as
 *   **Ansible**
 *   **AWS Iot Core**
 *   **Azure Iot Hub & Azure Device Provisioning**
+*   **Terraform**
 
 ## Main solutions
 
@@ -35,6 +36,15 @@ Simple python applications used SDKs from Azure and AWS. An application was also
 
 ## Cloud
 Below describes in general terms, without details of what had to be configured in the cloud. The screens are illustrative.
+
+## Terraform
+You can easily build up infrastructre using terraform files.
+All you have to do is:
+```
+terraform init
+terraform plan
+terraform apply
+```
 
 ### AWS
 For AWS, the AWS IoT Core service requires configuration.
