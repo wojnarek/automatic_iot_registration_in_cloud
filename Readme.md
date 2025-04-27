@@ -38,13 +38,14 @@ Simple python applications used SDKs from Azure and AWS. An application was also
 Below describes in general terms, without details of what had to be configured in the cloud. The screens are illustrative.
 
 ## Terraform
-You can easily build up infrastructre using terraform files.
+You can easily build up infrastructre (in AWS) using terraform files.
 All you have to do is:
 ```
 terraform init
 terraform plan
 terraform apply
 ```
+It creates: IAM Role, Device Policy and Provisoning template
 
 ### AWS
 For AWS, the AWS IoT Core service requires configuration.
